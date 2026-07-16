@@ -32,6 +32,10 @@ public class FishController : MonoBehaviour
     [Range(0f, 1f)]
     public float pitchFlatten = 0.35f;   // 俯仰压平：越小鱼越不会大幅抬头/低头
 
+    [Header("水母模式")]
+    [Tooltip("勾上后：身体保持直立（只绕Y轴转向），不摆尾，改为伞盖脉动")]
+    public bool jellyfishMode = false;
+
     [Header("避让（腿等障碍，见 FishAvoidZone）")]
     public bool avoidObstacles = true;
     public float avoidDistance = 0.03f;  // 距避让区表面多远开始绕
@@ -49,6 +53,7 @@ public class FishController : MonoBehaviour
     private Vector3 wanderTarget;
     private Quaternion bodyRotation;     // 平滑转向的基础朝向（摆尾叠加在它上面）
     private float wigglePhase;
+    private Vector3 baseScale;           // 水母脉动用
     private Coroutine biteRoutine;
 
     void Start()
@@ -57,6 +62,7 @@ public class FishController : MonoBehaviour
             transform.position = homePoint.position;
 
         bodyRotation = transform.rotation;
+        baseScale = transform.localScale;
         wigglePhase = Random.value * 100f;   // 每条鱼相位错开，不会同步摆尾
         PickNewWanderTarget();
     }
@@ -74,10 +80,8 @@ public class FishController : MonoBehaviour
         }
         else if (State == FishState.Biting)
         {
-            // 咬住时原地轻轻摆动
-            wigglePhase += dt * wiggleFrequency * Mathf.PI * 2f * 0.5f;
-            transform.rotation = bodyRotation
-                * Quaternion.Euler(0f, Mathf.Sin(wigglePhase) * wiggleAmplitude * 0.4f, 0f);
+            // 咬住时原地轻轻摆动/脉动
+            ApplySwimVisual(dt, 0f, 0.4f);
         }
         // GoingToBite / Returning 由协程每帧调用 SwimTowards 驱动
     }
@@ -160,6 +164,8 @@ public class FishController : MonoBehaviour
         dir.y *= pitchFlatten;
         if (avoidObstacles)
             dir = ApplyAvoidance(dir, target);
+        if (jellyfishMode)
+            dir.y = 0f;   // 水母保持直立，只绕 Y 轴转向
         if (dir.sqrMagnitude > 0.0000001f)
         {
             Quaternion look = Quaternion.LookRotation(dir.normalized);
@@ -173,14 +179,33 @@ public class FishController : MonoBehaviour
         float newY = Mathf.MoveTowards(transform.position.y, target.y, speed * 0.5f * dt);
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
 
-        // 摆尾：游得越快摆得越快
-        wigglePhase += dt * wiggleFrequency * Mathf.PI * 2f * (1f + speed * 4f);
-        float wiggle = Mathf.Sin(wigglePhase) * wiggleAmplitude;
-        transform.rotation = bodyRotation * Quaternion.Euler(0f, wiggle, 0f);
+        // 摆尾（鱼）或伞盖脉动（水母）
+        ApplySwimVisual(dt, speed, 1f);
 
         // 保险：万一已经和避让区重叠，缓缓推出去
         if (avoidObstacles)
             PushOutOfZones(target, dt);
+    }
+
+    /// 游动的视觉表现：普通鱼 = 左右摆尾；水母 = 保持直立 + 伞盖脉动
+    void ApplySwimVisual(float dt, float speed, float amplitudeScale)
+    {
+        if (jellyfishMode)
+        {
+            wigglePhase += dt * wiggleFrequency * Mathf.PI * 2f;
+            float s = Mathf.Sin(wigglePhase);
+            transform.localScale = new Vector3(
+                baseScale.x * (1f - s * 0.06f),
+                baseScale.y * (1f + s * 0.12f),
+                baseScale.z * (1f - s * 0.06f));
+            transform.rotation = bodyRotation;
+        }
+        else
+        {
+            wigglePhase += dt * wiggleFrequency * Mathf.PI * 2f * (1f + speed * 4f);
+            float wiggle = Mathf.Sin(wigglePhase) * wiggleAmplitude * amplitudeScale;
+            transform.rotation = bodyRotation * Quaternion.Euler(0f, wiggle, 0f);
+        }
     }
 
     /// 转向避让：把"远离所有避让区"的分量叠加到期望方向上。

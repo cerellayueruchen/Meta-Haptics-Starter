@@ -1,33 +1,34 @@
 using System.Collections;
 using UnityEngine;
 
-/// 整个体验的时间轴（总长 120 秒）：
-///   0s   开场：水流轻抚（震动之后再接），所有鱼在桶内随机游动
-///  30s   4 条小鱼多次轮流咬用户下肢
-///  60s   3 条大鱼咬用户小腿
-///  90s   水母咬用户小腿（模型还没放进去，数组先留空即可）
-/// 110s   所有归于平静，鱼回到随机游动，水流轻抚
-/// 120s   体验结束
+/// 整个体验的时间轴（总长 60 秒）：
+///   0s      开场：水流轻抚，所有鱼在桶内随机游动
+///  15-30s   小鱼疯狂咬：每 1 秒派一条小鱼冲去咬（4条轮换）
+///  30-45s   大鱼咬：每 2 秒派一条大鱼咬一次（2条轮换）
+///  48s/55s  水母各攻击一次
+///  60s      体验结束，归于平静
 public class ExperienceTimeline : MonoBehaviour
 {
     [Header("鱼的分组")]
-    public FishController[] smallFish;   // 4条小鱼
-    public FishController[] bigFish;     // 3条大鱼
-    public FishController[] jellyfish;   // 水母（模型放进场景后再拖进来）
+    public FishController[] smallFish;   // 4条小鱼 FishV1-V4
+    public FishController[] bigFish;     // 大鱼 fish01/fish02
+    public FishController[] jellyfish;   // 水母
 
-    [Header("时间点（秒）")]
-    public float totalDuration = 120f;
-    public float smallFishBiteTime = 30f;
-    public float bigFishBiteTime = 60f;
-    public float jellyfishBiteTime = 90f;
-    public float calmDownTime = 110f;    // 收尾：所有鱼归于平静
+    [Header("总时长（秒）")]
+    public float totalDuration = 60f;
 
-    [Header("咬钩参数")]
-    [Tooltip("同一组的鱼依次出发的间隔（秒），做出“轮流咬”的效果")]
-    public float turnInterval = 2f;
-    public int smallFishBiteCount = 3;   // 每条小鱼咬几次
-    public int bigFishBiteCount = 2;
-    public int jellyfishBiteCount = 1;
+    [Header("小鱼疯狂咬")]
+    public float smallFishStartTime = 15f;
+    public float smallFishEndTime = 30f;
+    public float smallFishInterval = 1f;   // 每 1 秒派一条
+
+    [Header("大鱼咬")]
+    public float bigFishStartTime = 30f;
+    public float bigFishEndTime = 45f;
+    public float bigFishInterval = 2f;     // 每 2 秒派一条
+
+    [Header("水母攻击时间点")]
+    public float[] jellyfishAttackTimes = { 48f, 55f };
 
     [Header("其他")]
     public bool playOnStart = true;
@@ -52,51 +53,62 @@ public class ExperienceTimeline : MonoBehaviour
     {
         float startTime = Time.time;
         Debug.Log("[Timeline] 0s 体验开始：水流轻抚，所有鱼随机游动");
-        // TODO: 这里之后触发“水流轻抚”的震动
 
-        // ---- 30s：小鱼多次轮流咬下肢 ----
-        yield return WaitUntil(startTime, smallFishBiteTime);
-        Debug.Log("[Timeline] 30s：小鱼开始轮流咬下肢");
-        yield return StartGroupInTurns(smallFish, smallFishBiteCount);
+        // ---- 15-30s：小鱼疯狂咬，每秒一条 ----
+        yield return DispatchLoop(smallFish, startTime,
+            smallFishStartTime, smallFishEndTime, smallFishInterval, "小鱼");
+        StopGroup(smallFish);
 
-        // ---- 60s：大鱼咬小腿 ----
-        yield return WaitUntil(startTime, bigFishBiteTime);
-        Debug.Log("[Timeline] 60s：大鱼开始咬小腿");
-        StopGroup(smallFish);                       // 小鱼回到随机游动
-        yield return StartGroupInTurns(bigFish, bigFishBiteCount);
-
-        // ---- 90s：水母咬小腿 ----
-        yield return WaitUntil(startTime, jellyfishBiteTime);
-        Debug.Log("[Timeline] 90s：水母咬小腿");
+        // ---- 30-45s：大鱼咬，每2秒一条 ----
+        yield return DispatchLoop(bigFish, startTime,
+            bigFishStartTime, bigFishEndTime, bigFishInterval, "大鱼");
         StopGroup(bigFish);
-        yield return StartGroupInTurns(jellyfish, jellyfishBiteCount);
 
-        // ---- 110s：归于平静 ----
-        yield return WaitUntil(startTime, calmDownTime);
-        Debug.Log("[Timeline] 110s 归于平静：所有鱼回到随机游动，水流轻抚");
+        // ---- 48s / 55s：水母攻击 ----
+        foreach (float t in jellyfishAttackTimes)
+        {
+            yield return WaitUntil(startTime, t);
+            Debug.Log($"[Timeline] {t}s：水母发起攻击");
+            foreach (var jelly in jellyfish)
+            {
+                if (jelly != null)
+                    jelly.StartBiting(1);
+            }
+        }
+
+        // ---- 60s：结束，归于平静 ----
+        yield return WaitUntil(startTime, totalDuration);
         StopGroup(smallFish);
         StopGroup(bigFish);
         StopGroup(jellyfish);
-        // TODO: 这里之后触发“水流轻抚”的震动
-
-        // ---- 120s：结束 ----
-        yield return WaitUntil(startTime, totalDuration);
-        Debug.Log("[Timeline] 120s 体验结束");
+        Debug.Log("[Timeline] 60s 体验结束：归于平静");
         timelineRoutine = null;
     }
 
-    // 同一组的鱼每隔 turnInterval 秒依次出发，形成轮流咬的效果
-    IEnumerator StartGroupInTurns(FishController[] group, int biteCount)
+    // 在 [from, to) 时间段内，每隔 interval 秒轮换派出组里的一条鱼去咬一次。
+    // 用绝对时间点调度，不会累积误差。
+    IEnumerator DispatchLoop(FishController[] group, float startTime,
+                             float from, float to, float interval, string label)
     {
-        if (group == null)
+        if (group == null || group.Length == 0)
             yield break;
 
-        foreach (var fish in group)
+        yield return WaitUntil(startTime, from);
+        Debug.Log($"[Timeline] {from}s：{label}开始咬（每 {interval}s 一条）");
+
+        int index = 0;
+        float nextDispatch = from;
+        while (Time.time - startTime < to)
         {
-            if (fish == null)
-                continue;
-            fish.StartBiting(biteCount);
-            yield return new WaitForSeconds(turnInterval);
+            if (Time.time - startTime >= nextDispatch)
+            {
+                var fish = group[index % group.Length];
+                if (fish != null)
+                    fish.StartBiting(1);
+                index++;
+                nextDispatch += interval;
+            }
+            yield return null;
         }
     }
 
