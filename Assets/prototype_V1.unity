@@ -186,7 +186,7 @@ GameObject:
   m_Component:
   - component: {fileID: 86296724}
   m_Layer: 0
-  m_Name: FishV2_bite
+  m_Name: Fish_bite_V3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -201,7 +201,7 @@ Transform:
   m_GameObject: {fileID: 86296723}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0159, y: 0.0932, z: 0}
+  m_LocalPosition: {x: -0.0159, y: 0.082, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -233,37 +233,6 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.05923131, y: 0.0039517134, z: 0.014067173}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 815084680}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &415150704
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 415150705}
-  m_Layer: 0
-  m_Name: fish03_bite
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &415150705
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 415150704}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.144, y: -0.0188, z: 0.072}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -496,7 +465,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b2c5f7d9e3a4b1c8d6e0f2a4b6c8d13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishAvoidZone
-  radius: 0.045
 --- !u!136 &485764968
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -796,7 +764,7 @@ GameObject:
   m_Component:
   - component: {fileID: 570216222}
   m_Layer: 0
-  m_Name: FishV3_bite
+  m_Name: Fish_swim_V4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -811,7 +779,7 @@ Transform:
   m_GameObject: {fileID: 570216221}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0107, y: 0.053, z: 0}
+  m_LocalPosition: {x: -0.152, y: 0.053, z: 0.072}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -836,14 +804,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   homePoint: {fileID: 840602390}
   bitePoint: {fileID: 1131398229}
+  bitePoints:
+  - {fileID: 2023145688}
+  - {fileID: 1685330453}
+  - {fileID: 612621916}
+  - {fileID: 1709740136}
+  - {fileID: 86296724}
+  - {fileID: 1543925011}
+  - {fileID: 1131398229}
+  - {fileID: 1040742198}
   wanderCenter: {fileID: 0}
   wanderRadius: 0.07
   wanderHeight: 0.03
-  wanderSpeed: 0.05
-  swimSpeed: 0.2
+  wanderSpeed: 0.06
+  swimPattern: 3
+  circleCenter: {fileID: 0}
+  circleRadius: 0.11
+  eightPointA: {fileID: 485764971}
+  eightPointB: {fileID: 2108482828}
+  eightWidth: 1.5
+  swimPoints:
+  - {fileID: 998082013}
+  - {fileID: 1673552154}
+  - {fileID: 945092266}
+  - {fileID: 570216222}
+  - {fileID: 840602390}
+  swimSpeed: 0.15
   rotateSpeed: 3
-  wiggleAmplitude: 10
+  mouthOffset: 0.03
+  wiggleAmplitude: 0
   wiggleFrequency: 2.5
+  headingOffsetY: 180
+  patternClockwise: 1
   pitchFlatten: 0.35
   jellyfishMode: 0
   avoidObstacles: 1
@@ -865,19 +857,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 736482141215372739, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.10000002
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 736482141215372739, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.099999994
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 736482141215372739, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.10000002
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 736482141215372739, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.41637033
+      value: -0.41635692
       objectReference: {fileID: 0}
     - target: {fileID: 736482141215372739, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
       propertyPath: m_LocalPosition.y
@@ -885,11 +877,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 736482141215372739, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.3288667
+      value: -3.3294313
       objectReference: {fileID: 0}
     - target: {fileID: 736482141215372739, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.68851733
+      value: -0.6716826
       objectReference: {fileID: 0}
     - target: {fileID: 736482141215372739, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
       propertyPath: m_LocalRotation.x
@@ -897,7 +889,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 736482141215372739, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7252199
+      value: 0.7408391
       objectReference: {fileID: 0}
     - target: {fileID: 736482141215372739, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
       propertyPath: m_LocalRotation.z
@@ -909,7 +901,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 736482141215372739, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 92.974
+      value: 264.39398
       objectReference: {fileID: 0}
     - target: {fileID: 736482141215372739, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -933,7 +925,7 @@ GameObject:
   m_Component:
   - component: {fileID: 612621916}
   m_Layer: 0
-  m_Name: FishV1_bite
+  m_Name: Fish_bite_V2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -948,7 +940,7 @@ Transform:
   m_GameObject: {fileID: 612621915}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.1211, y: 0.0993, z: 0}
+  m_LocalPosition: {x: -0.114, y: 0.077, z: -0.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1135,19 +1127,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.05
+      value: 0.035
       objectReference: {fileID: 0}
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.05
+      value: 0.035
       objectReference: {fileID: 0}
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.05
+      value: 0.035
       objectReference: {fileID: 0}
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.484
+      value: -0.4837954
       objectReference: {fileID: 0}
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1155,23 +1147,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.318
+      value: -3.3117077
       objectReference: {fileID: 0}
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: -0.03270534
       objectReference: {fileID: 0}
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.99946505
       objectReference: {fileID: 0}
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1179,7 +1171,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 183.748
       objectReference: {fileID: 0}
     - target: {fileID: 1624506335958790680, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -1211,19 +1203,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.05
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.05
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.05
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.4466
+      value: -0.44927603
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1231,23 +1223,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.32
+      value: -3.3056731
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: -0.18367657
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.98298675
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1255,7 +1247,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -201.168
       objectReference: {fileID: 0}
     - target: {fileID: 3763348962786990885, guid: a20ffe8d10c78534cafd817b38517e05, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -1302,16 +1294,20 @@ Transform:
   - {fileID: 2014940052}
   - {fileID: 358188667}
   - {fileID: 1121826969}
+  - {fileID: 840618458}
   - {fileID: 2023145688}
-  - {fileID: 415150705}
-  - {fileID: 998082013}
+  - {fileID: 1685330453}
   - {fileID: 612621916}
-  - {fileID: 1673552154}
+  - {fileID: 1709740136}
   - {fileID: 86296724}
+  - {fileID: 1543925011}
+  - {fileID: 1131398229}
+  - {fileID: 1040742198}
+  - {fileID: 998082013}
+  - {fileID: 1673552154}
   - {fileID: 945092266}
   - {fileID: 570216222}
   - {fileID: 840602390}
-  - {fileID: 1131398229}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &840602389
@@ -1324,7 +1320,7 @@ GameObject:
   m_Component:
   - component: {fileID: 840602390}
   m_Layer: 0
-  m_Name: FishV4_home
+  m_Name: Fish_swim_V5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1339,7 +1335,38 @@ Transform:
   m_GameObject: {fileID: 840602389}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.14218509, y: 0.033951715, z: 0.065515995}
+  m_LocalPosition: {x: -0.095, y: 0.033951715, z: -0.039}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 815084680}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &840618457
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 840618458}
+  m_Layer: 0
+  m_Name: jellyfish_bite
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &840618458
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840618457}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.149, y: -0.005, z: 0.071}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1364,14 +1391,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   homePoint: {fileID: 998082013}
   bitePoint: {fileID: 612621916}
+  bitePoints:
+  - {fileID: 2023145688}
+  - {fileID: 1685330453}
+  - {fileID: 612621916}
+  - {fileID: 1709740136}
+  - {fileID: 86296724}
+  - {fileID: 1543925011}
+  - {fileID: 1131398229}
+  - {fileID: 1040742198}
   wanderCenter: {fileID: 0}
   wanderRadius: 0.07
   wanderHeight: 0.03
-  wanderSpeed: 0.05
-  swimSpeed: 0.2
+  wanderSpeed: 0.06
+  swimPattern: 3
+  circleCenter: {fileID: 0}
+  circleRadius: 0.11
+  eightPointA: {fileID: 485764971}
+  eightPointB: {fileID: 2108482828}
+  eightWidth: 1.5
+  swimPoints:
+  - {fileID: 998082013}
+  - {fileID: 1673552154}
+  - {fileID: 945092266}
+  - {fileID: 570216222}
+  - {fileID: 840602390}
+  swimSpeed: 0.15
   rotateSpeed: 3
-  wiggleAmplitude: 10
+  mouthOffset: 0.03
+  wiggleAmplitude: 0
   wiggleFrequency: 2.5
+  headingOffsetY: 180
+  patternClockwise: 1
   pitchFlatten: 0.35
   jellyfishMode: 0
   avoidObstacles: 1
@@ -1420,19 +1471,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1579497082370369827, guid: de500f6b90f89bc4c87a6585b2dea01a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.06
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 1579497082370369827, guid: de500f6b90f89bc4c87a6585b2dea01a, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.06
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 1579497082370369827, guid: de500f6b90f89bc4c87a6585b2dea01a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.06
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 1579497082370369827, guid: de500f6b90f89bc4c87a6585b2dea01a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.425
+      value: -0.4240696
       objectReference: {fileID: 0}
     - target: {fileID: 1579497082370369827, guid: de500f6b90f89bc4c87a6585b2dea01a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1440,11 +1491,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1579497082370369827, guid: de500f6b90f89bc4c87a6585b2dea01a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.323
+      value: -3.3227742
       objectReference: {fileID: 0}
     - target: {fileID: 1579497082370369827, guid: de500f6b90f89bc4c87a6585b2dea01a, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.69138193
+      value: 0.5400549
       objectReference: {fileID: 0}
     - target: {fileID: 1579497082370369827, guid: de500f6b90f89bc4c87a6585b2dea01a, type: 3}
       propertyPath: m_LocalRotation.x
@@ -1452,7 +1503,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1579497082370369827, guid: de500f6b90f89bc4c87a6585b2dea01a, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.7224895
+      value: -0.84162974
       objectReference: {fileID: 0}
     - target: {fileID: 1579497082370369827, guid: de500f6b90f89bc4c87a6585b2dea01a, type: 3}
       propertyPath: m_LocalRotation.z
@@ -1464,7 +1515,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1579497082370369827, guid: de500f6b90f89bc4c87a6585b2dea01a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -92.521
+      value: -114.625
       objectReference: {fileID: 0}
     - target: {fileID: 1579497082370369827, guid: de500f6b90f89bc4c87a6585b2dea01a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -1492,7 +1543,7 @@ GameObject:
   m_Component:
   - component: {fileID: 945092266}
   m_Layer: 0
-  m_Name: FishV3_home
+  m_Name: Fish_swim_V3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1507,7 +1558,7 @@ Transform:
   m_GameObject: {fileID: 945092265}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.037631333, y: 0.10095173, z: 0.011067152}
+  m_LocalPosition: {x: -0.066, y: 0.034, z: 0.131}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1523,7 +1574,7 @@ GameObject:
   m_Component:
   - component: {fileID: 998082013}
   m_Layer: 0
-  m_Name: FishV1_home
+  m_Name: Fish_swim_V1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1538,7 +1589,7 @@ Transform:
   m_GameObject: {fileID: 998082012}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.029001653, y: -0.029361561, z: 0.005200386}
+  m_LocalPosition: {x: -0.044, y: 0.008, z: 0.005200386}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1563,14 +1614,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   homePoint: {fileID: 945092266}
   bitePoint: {fileID: 570216222}
+  bitePoints:
+  - {fileID: 2023145688}
+  - {fileID: 1685330453}
+  - {fileID: 612621916}
+  - {fileID: 1709740136}
+  - {fileID: 86296724}
+  - {fileID: 1543925011}
+  - {fileID: 1131398229}
+  - {fileID: 1040742198}
   wanderCenter: {fileID: 0}
   wanderRadius: 0.07
   wanderHeight: 0.03
-  wanderSpeed: 0.05
-  swimSpeed: 0.2
+  wanderSpeed: 0.06
+  swimPattern: 3
+  circleCenter: {fileID: 0}
+  circleRadius: 0.11
+  eightPointA: {fileID: 485764971}
+  eightPointB: {fileID: 2108482828}
+  eightWidth: 1.5
+  swimPoints:
+  - {fileID: 998082013}
+  - {fileID: 1673552154}
+  - {fileID: 945092266}
+  - {fileID: 570216222}
+  - {fileID: 840602390}
+  swimSpeed: 0.15
   rotateSpeed: 3
-  wiggleAmplitude: 10
+  mouthOffset: 0.03
+  wiggleAmplitude: 0
   wiggleFrequency: 2.5
+  headingOffsetY: 180
+  patternClockwise: 1
   pitchFlatten: 0.35
   jellyfishMode: 0
   avoidObstacles: 1
@@ -1578,6 +1653,37 @@ MonoBehaviour:
   avoidStrength: 2
   waitAtHome: 2
   waitAtBite: 1
+--- !u!1 &1040742197
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1040742198}
+  m_Layer: 0
+  m_Name: Fish_bite_V4 (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1040742198
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1040742197}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.166, y: 0.034, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 815084680}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1060216069 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7660056815385157646, guid: 35b7195a6107d514e842806a72d31d57, type: 3}
@@ -1597,14 +1703,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   homePoint: {fileID: 910654528}
   bitePoint: {fileID: 2014940052}
+  bitePoints: []
   wanderCenter: {fileID: 0}
   wanderRadius: 0.07
   wanderHeight: 0.03
-  wanderSpeed: 0.05
-  swimSpeed: 0.2
+  wanderSpeed: 0.08
+  swimPattern: 1
+  circleCenter: {fileID: 1393146244}
+  circleRadius: 0.07
+  eightPointA: {fileID: 0}
+  eightPointB: {fileID: 0}
+  eightWidth: 1.5
+  swimPoints: []
+  swimSpeed: 0.15
   rotateSpeed: 3
-  wiggleAmplitude: 10
+  mouthOffset: 0
+  wiggleAmplitude: 0
   wiggleFrequency: 2.5
+  headingOffsetY: 180
+  patternClockwise: 1
   pitchFlatten: 0.35
   jellyfishMode: 0
   avoidObstacles: 1
@@ -1653,7 +1770,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1131398229}
   m_Layer: 0
-  m_Name: FishV4_bite
+  m_Name: Fish_bite_V4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1668,7 +1785,7 @@ Transform:
   m_GameObject: {fileID: 1131398228}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.166, y: 0.034, z: 0}
+  m_LocalPosition: {x: -0.177, y: 0.097, z: -0.032}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1787,6 +1904,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1543925010
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1543925011}
+  m_Layer: 0
+  m_Name: Fish_bite_V3 (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1543925011
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1543925010}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.0159, y: 0.026, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 815084680}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1569943321
 PrefabInstance:
@@ -2187,13 +2335,7 @@ PrefabInstance:
     - {fileID: -4276752649453153793, guid: 6bc500f4743d8f1488de0a15aed3d65e, type: 3}
     - {fileID: -1458128483970549129, guid: 6bc500f4743d8f1488de0a15aed3d65e, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8555767535324051601, guid: 6bc500f4743d8f1488de0a15aed3d65e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1999999133}
-    - targetCorrespondingSourceObject: {fileID: 7410446023472839345, guid: 6bc500f4743d8f1488de0a15aed3d65e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1999999134}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6bc500f4743d8f1488de0a15aed3d65e, type: 3}
 --- !u!1001 &1632880230
 PrefabInstance:
@@ -2205,19 +2347,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6961854119965240234, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.08
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 6961854119965240234, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.08
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 6961854119965240234, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.08
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 6961854119965240234, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.405
+      value: -0.40493426
       objectReference: {fileID: 0}
     - target: {fileID: 6961854119965240234, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2225,19 +2367,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6961854119965240234, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.2706
+      value: -3.2710183
       objectReference: {fileID: 0}
     - target: {fileID: 6961854119965240234, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9876596
       objectReference: {fileID: 0}
     - target: {fileID: 6961854119965240234, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6961854119965240234, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: -0.15661585
       objectReference: {fileID: 0}
     - target: {fileID: 6961854119965240234, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
       propertyPath: m_LocalRotation.z
@@ -2249,7 +2391,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6961854119965240234, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -18.021
       objectReference: {fileID: 0}
     - target: {fileID: 6961854119965240234, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -2277,7 +2419,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1673552154}
   m_Layer: 0
-  m_Name: FishV2_home
+  m_Name: Fish_swim_V2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2292,7 +2434,69 @@ Transform:
   m_GameObject: {fileID: 1673552153}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.017631322, y: 0.037251726, z: 0.063467026}
+  m_LocalPosition: {x: 0.014, y: 0.037251726, z: 0.077}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 815084680}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1685330452
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1685330453}
+  m_Layer: 0
+  m_Name: Fish_bite_V1 (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1685330453
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1685330452}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.03, y: 0.033, z: -0.021}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 815084680}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1709740135
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1709740136}
+  m_Layer: 0
+  m_Name: Fish_bite_V2 (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1709740136
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709740135}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.1211, y: 0.032, z: -0.026}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2320,7 +2524,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1272374852726147370, guid: a05072560c3476b4cb8dddf22f697392, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.5295538
+      value: -0.52524996
       objectReference: {fileID: 0}
     - target: {fileID: 1272374852726147370, guid: a05072560c3476b4cb8dddf22f697392, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2328,11 +2532,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1272374852726147370, guid: a05072560c3476b4cb8dddf22f697392, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.268551
+      value: -3.2713864
       objectReference: {fileID: 0}
     - target: {fileID: 1272374852726147370, guid: a05072560c3476b4cb8dddf22f697392, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9557753
+      value: -0.280231
       objectReference: {fileID: 0}
     - target: {fileID: 1272374852726147370, guid: a05072560c3476b4cb8dddf22f697392, type: 3}
       propertyPath: m_LocalRotation.x
@@ -2340,7 +2544,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1272374852726147370, guid: a05072560c3476b4cb8dddf22f697392, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.2940978
+      value: 0.9599326
       objectReference: {fileID: 0}
     - target: {fileID: 1272374852726147370, guid: a05072560c3476b4cb8dddf22f697392, type: 3}
       propertyPath: m_LocalRotation.z
@@ -2352,7 +2556,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1272374852726147370, guid: a05072560c3476b4cb8dddf22f697392, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -685.79297
+      value: -507.452
       objectReference: {fileID: 0}
     - target: {fileID: 1272374852726147370, guid: a05072560c3476b4cb8dddf22f697392, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -2454,14 +2658,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   homePoint: {fileID: 1673552154}
   bitePoint: {fileID: 86296724}
+  bitePoints:
+  - {fileID: 2023145688}
+  - {fileID: 1685330453}
+  - {fileID: 612621916}
+  - {fileID: 1709740136}
+  - {fileID: 86296724}
+  - {fileID: 1543925011}
+  - {fileID: 1131398229}
+  - {fileID: 1040742198}
   wanderCenter: {fileID: 0}
   wanderRadius: 0.07
   wanderHeight: 0.03
-  wanderSpeed: 0.05
-  swimSpeed: 0.2
+  wanderSpeed: 0.06
+  swimPattern: 3
+  circleCenter: {fileID: 0}
+  circleRadius: 0.11
+  eightPointA: {fileID: 485764971}
+  eightPointB: {fileID: 2108482828}
+  eightWidth: 1.5
+  swimPoints:
+  - {fileID: 998082013}
+  - {fileID: 1673552154}
+  - {fileID: 945092266}
+  - {fileID: 570216222}
+  - {fileID: 840602390}
+  swimSpeed: 0.15
   rotateSpeed: 3
-  wiggleAmplitude: 10
+  mouthOffset: 0.03
+  wiggleAmplitude: 0
   wiggleFrequency: 2.5
+  headingOffsetY: 180
+  patternClockwise: 1
   pitchFlatten: 0.35
   jellyfishMode: 0
   avoidObstacles: 1
@@ -2735,14 +2963,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   homePoint: {fileID: 358188667}
   bitePoint: {fileID: 1121826969}
+  bitePoints: []
   wanderCenter: {fileID: 0}
   wanderRadius: 0.07
   wanderHeight: 0.03
-  wanderSpeed: 0.05
-  swimSpeed: 0.2
+  wanderSpeed: 0.08
+  swimPattern: 1
+  circleCenter: {fileID: 1393146244}
+  circleRadius: 0.09
+  eightPointA: {fileID: 0}
+  eightPointB: {fileID: 0}
+  eightWidth: 1.5
+  swimPoints: []
+  swimSpeed: 0.15
   rotateSpeed: 3
-  wiggleAmplitude: 10
+  mouthOffset: 0
+  wiggleAmplitude: 0
   wiggleFrequency: 2.5
+  headingOffsetY: 180
+  patternClockwise: 1
   pitchFlatten: 0.35
   jellyfishMode: 0
   avoidObstacles: 1
@@ -2815,42 +3054,6 @@ MonoBehaviour:
   - 48
   - 55
   playOnStart: 1
---- !u!1 &1999999123 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8555767535324051601, guid: 6bc500f4743d8f1488de0a15aed3d65e, type: 3}
-  m_PrefabInstance: {fileID: 1569943321}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1999999124 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7410446023472839345, guid: 6bc500f4743d8f1488de0a15aed3d65e, type: 3}
-  m_PrefabInstance: {fileID: 1569943321}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1999999133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1999999123}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b2c5f7d9e3a4b1c8d6e0f2a4b6c8d13, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  radius: 0.04
---- !u!114 &1999999134
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1999999124}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b2c5f7d9e3a4b1c8d6e0f2a4b6c8d13, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  radius: 0.04
 --- !u!1 &1999999201
 GameObject:
   m_ObjectHideFlags: 0
@@ -2901,16 +3104,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18610f8c36de3dc4bad2831d3ee0a46a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  homePoint: {fileID: 2023145688}
-  bitePoint: {fileID: 415150705}
-  wanderCenter: {fileID: 0}
+  homePoint: {fileID: 840618458}
+  bitePoint: {fileID: 840618458}
+  bitePoints: []
+  wanderCenter: {fileID: 840618458}
   wanderRadius: 0.07
   wanderHeight: 0.03
   wanderSpeed: 0.03
+  swimPattern: 0
+  circleCenter: {fileID: 0}
+  circleRadius: 0.11
+  eightPointA: {fileID: 0}
+  eightPointB: {fileID: 0}
+  eightWidth: 1.5
+  swimPoints: []
   swimSpeed: 0.15
   rotateSpeed: 3
-  wiggleAmplitude: 10
+  mouthOffset: 0
+  wiggleAmplitude: 0
   wiggleFrequency: 1.2
+  headingOffsetY: 0
+  patternClockwise: 1
   pitchFlatten: 0.35
   jellyfishMode: 1
   avoidObstacles: 1
@@ -3583,7 +3797,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2023145688}
   m_Layer: 0
-  m_Name: fish03_home
+  m_Name: Fish_bite_V1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3598,7 +3812,7 @@ Transform:
   m_GameObject: {fileID: 2023145687}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.09263131, y: 0.07395172, z: 0.03506708}
+  m_LocalPosition: {x: 0.045, y: 0.07395172, z: -0.021}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3668,7 +3882,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b2c5f7d9e3a4b1c8d6e0f2a4b6c8d13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishAvoidZone
-  radius: 0.045
 --- !u!136 &2108482825
 CapsuleCollider:
   m_ObjectHideFlags: 0
