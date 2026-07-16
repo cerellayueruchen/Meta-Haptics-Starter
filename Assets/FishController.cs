@@ -1,59 +1,70 @@
 using System.Collections;
 using UnityEngine;
 
-/// 鱼的行为控制（程序化游动，适用于没有骨骼动画的静态鱼模型）：
-/// 默认状态 = 在桶内随机游动（Wander）
-/// 收到 StartBiting() 命令后 = 游到咬钩点咬住 → 回家 → 重复若干次 → 回到随机游动
+/// Controls the procedural swimming behaviour of a fish.
+/// Default state: Wander randomly inside the bucket.
+/// After receiving StartBiting(), the fish swims to the bite point,
+/// stays there briefly, returns home, repeats for the specified
+/// number of bites, and finally resumes wandering.
 ///
-/// 游动原理：鱼永远只沿自己头部朝向前进，通过平滑转向画出弧线，
-/// 同时叠加左右摆尾，让静态模型看起来也像在游。
+/// Swimming is generated procedurally. The fish always moves forward
+/// along its heading while smoothly steering toward its target.
+/// A side-to-side body oscillation creates a natural swimming motion.
 public class FishController : MonoBehaviour
 {
-    public enum FishState { Wander, GoingToBite, Biting, Returning }
+    public enum FishState
+    {
+        Wander,
+        GoingToBite,
+        Biting,
+        Returning
+    }
 
     [Header("Target Points")]
     public Transform homePoint;
     public Transform bitePoint;
 
-    [Header("Wander (随机游动)")]
-    [Tooltip("随机游动的中心点，不填则以 homePoint 为中心")]
+    [Header("Wander")]
+    [Tooltip("Center position of wandering. If empty, homePoint is used.")]
     public Transform wanderCenter;
-    public float wanderRadius = 0.07f;   // 水平随机范围（米）
-    public float wanderHeight = 0.03f;   // 垂直随机范围（米）
-    public float wanderSpeed = 0.05f;    // 闲逛速度（慢慢游）
+
+    public float wanderRadius = 0.07f;
+    public float wanderHeight = 0.03f;
+    public float wanderSpeed = 0.05f;
 
     [Header("Movement")]
-    public float swimSpeed = 0.2f;       // 去咬钩/回家时的速度
-    public float rotateSpeed = 3f;       // 转向的平滑速度
+    public float swimSpeed = 0.2f;
+    public float rotateSpeed = 3f;
 
-    [Header("游动姿态")]
-    public float wiggleAmplitude = 10f;  // 摆尾角度（度）
-    public float wiggleFrequency = 2.5f; // 摆尾频率（次/秒）
+    [Header("Swimming Motion")]
+    public float wiggleAmplitude = 10f;
+    public float wiggleFrequency = 2.5f;
+
     [Range(0f, 1f)]
-    public float pitchFlatten = 0.35f;   // 俯仰压平：越小鱼越不会大幅抬头/低头
+    public float pitchFlatten = 0.35f;
 
-    [Header("水母模式")]
-    [Tooltip("勾上后：身体保持直立（只绕Y轴转向），不摆尾，改为伞盖脉动")]
+    [Header("Jellyfish Mode")]
+    [Tooltip("Keep upright, rotate only around Y, and pulse instead of wiggling.")]
     public bool jellyfishMode = false;
 
-    [Header("避让（腿等障碍，见 FishAvoidZone）")]
+    [Header("Obstacle Avoidance")]
     public bool avoidObstacles = true;
-    public float avoidDistance = 0.03f;  // 距避让区表面多远开始绕
-    public float avoidStrength = 2f;     // 绕开的力度
+    public float avoidDistance = 0.03f;
+    public float avoidStrength = 2f;
 
     [Header("Behaviour")]
-    public float waitAtHome = 2f;        // 两次咬之间在家停留
-    public float waitAtBite = 1f;        // 咬住时停留
+    public float waitAtHome = 2f;
+    public float waitAtBite = 1f;
 
-    /// 咬到用户的瞬间触发（之后接震动就订阅这个事件）
+    /// Fired when the fish reaches the bite point.
     public event System.Action<FishController> OnBite;
 
     public FishState State { get; private set; } = FishState.Wander;
 
     private Vector3 wanderTarget;
-    private Quaternion bodyRotation;     // 平滑转向的基础朝向（摆尾叠加在它上面）
+    private Quaternion bodyRotation;
     private float wigglePhase;
-    private Vector3 baseScale;           // 水母脉动用
+    private Vector3 baseScale;
     private Coroutine biteRoutine;
 
     void Start()
@@ -63,7 +74,10 @@ public class FishController : MonoBehaviour
 
         bodyRotation = transform.rotation;
         baseScale = transform.localScale;
-        wigglePhase = Random.value * 100f;   // 每条鱼相位错开，不会同步摆尾
+
+        // Offset each fish's animation phase so they do not move identically.
+        wigglePhase = Random.value * 100f;
+
         PickNewWanderTarget();
     }
 
@@ -80,22 +94,24 @@ public class FishController : MonoBehaviour
         }
         else if (State == FishState.Biting)
         {
-            // 咬住时原地轻轻摆动/脉动
             ApplySwimVisual(dt, 0f, 0.4f);
         }
-        // GoingToBite / Returning 由协程每帧调用 SwimTowards 驱动
+
+        // GoingToBite and Returning are driven by coroutines.
     }
 
-    // ---------- 外部命令（由 ExperienceTimeline 调用） ----------
+    // --------------------------------------------------
+    // Public API
+    // --------------------------------------------------
 
-    /// 命令：去咬用户 biteCount 次（每次：游到咬钩点 → 咬住 → 回家）
+    /// Start the biting behaviour.
     public void StartBiting(int biteCount)
     {
         StopBiting();
         biteRoutine = StartCoroutine(BiteRoutine(biteCount));
     }
 
-    /// 命令：停止咬钩，回到随机游动
+    /// Stop biting immediately and return to wandering.
     public void StopBiting()
     {
         if (biteRoutine != null)
@@ -103,11 +119,14 @@ public class FishController : MonoBehaviour
             StopCoroutine(biteRoutine);
             biteRoutine = null;
         }
+
         State = FishState.Wander;
         PickNewWanderTarget();
     }
 
-    // ---------- 内部逻辑 ----------
+    // --------------------------------------------------
+    // Internal Behaviour
+    // --------------------------------------------------
 
     IEnumerator BiteRoutine(int biteCount)
     {
@@ -117,16 +136,22 @@ public class FishController : MonoBehaviour
             yield return SwimUntilReached(bitePoint, swimSpeed);
 
             State = FishState.Biting;
-            OnBite?.Invoke(this);   // TODO: 之后在这里触发咬钩震动
+
+            OnBite?.Invoke(this);
+
             yield return new WaitForSeconds(waitAtBite);
 
             State = FishState.Returning;
+
             yield return SwimUntilReached(homePoint, swimSpeed);
+
             yield return new WaitForSeconds(waitAtHome);
         }
 
         biteRoutine = null;
+
         State = FishState.Wander;
+
         PickNewWanderTarget();
     }
 
@@ -136,157 +161,279 @@ public class FishController : MonoBehaviour
             yield break;
 
         float startTime = Time.time;
-        while (Vector3.Distance(transform.position, target.position) > 0.012f
-               && Time.time - startTime < timeout)
+
+        while (Vector3.Distance(transform.position, target.position) > 0.012f &&
+               Time.time - startTime < timeout)
         {
             float dt = Time.deltaTime;
+
             SwimTowards(target.position, speed, dt);
 
-            // 距离很近时额外向目标吸附一点，避免绕着目标转圈到不了
             float d = Vector3.Distance(transform.position, target.position);
+
             if (d < 0.05f)
             {
                 transform.position = Vector3.MoveTowards(
-                    transform.position, target.position, speed * 0.8f * dt);
+                    transform.position,
+                    target.position,
+                    speed * 0.8f * dt);
             }
+
             yield return null;
         }
     }
 
-    /// 核心游动：平滑转向 + 沿头部朝向前进 + 摆尾
+    /// Main swimming routine.
     void SwimTowards(Vector3 target, float speed, float dt)
     {
         if (dt <= 0f)
             return;
 
-        // 期望朝向（俯仰压平，鱼不会大幅抬头低头）
         Vector3 dir = target - transform.position;
+
         dir.y *= pitchFlatten;
-        if (avoidObstacles)
+
+        // Only wander behaviour uses obstacle avoidance.
+        if (avoidObstacles && State == FishState.Wander)
+        {
             dir = ApplyAvoidance(dir, target);
+        }
+
         if (jellyfishMode)
-            dir.y = 0f;   // 水母保持直立，只绕 Y 轴转向
+            dir.y = 0f;
+
         if (dir.sqrMagnitude > 0.0000001f)
         {
             Quaternion look = Quaternion.LookRotation(dir.normalized);
-            bodyRotation = Quaternion.Slerp(bodyRotation, look, rotateSpeed * dt);
+
+            bodyRotation = Quaternion.Slerp(
+                bodyRotation,
+                look,
+                rotateSpeed * dt);
         }
 
-        // 只沿自己的朝向往前游（转弯自然形成弧线，而不是横向平移）
-        transform.position += bodyRotation * Vector3.forward * (speed * dt);
+        transform.position +=
+            bodyRotation *
+            Vector3.forward *
+            (speed * dt);
 
-        // 垂直方向单独缓慢修正，保证能游到目标高度
-        float newY = Mathf.MoveTowards(transform.position.y, target.y, speed * 0.5f * dt);
-        transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+        float newY = Mathf.MoveTowards(
+            transform.position.y,
+            target.y,
+            speed * 0.5f * dt);
 
-        // 摆尾（鱼）或伞盖脉动（水母）
+        transform.position = new Vector3(
+            transform.position.x,
+            newY,
+            transform.position.z);
+
         ApplySwimVisual(dt, speed, 1f);
 
-        // 保险：万一已经和避让区重叠，缓缓推出去
-        if (avoidObstacles)
+        // Push the fish out only while wandering.
+        if (avoidObstacles && State == FishState.Wander)
+        {
             PushOutOfZones(target, dt);
+        }
     }
 
-    /// 游动的视觉表现：普通鱼 = 左右摆尾；水母 = 保持直立 + 伞盖脉动
+
+    /// Visual swimming animation.
+    /// Fish sway left and right, while jellyfish pulse vertically.
     void ApplySwimVisual(float dt, float speed, float amplitudeScale)
     {
         if (jellyfishMode)
         {
             wigglePhase += dt * wiggleFrequency * Mathf.PI * 2f;
+
             float s = Mathf.Sin(wigglePhase);
+
             transform.localScale = new Vector3(
                 baseScale.x * (1f - s * 0.06f),
                 baseScale.y * (1f + s * 0.12f),
                 baseScale.z * (1f - s * 0.06f));
+
             transform.rotation = bodyRotation;
         }
         else
         {
-            wigglePhase += dt * wiggleFrequency * Mathf.PI * 2f * (1f + speed * 4f);
-            float wiggle = Mathf.Sin(wigglePhase) * wiggleAmplitude * amplitudeScale;
-            transform.rotation = bodyRotation * Quaternion.Euler(0f, wiggle, 0f);
+            wigglePhase +=
+                dt *
+                wiggleFrequency *
+                Mathf.PI *
+                2f *
+                (1f + speed * 4f);
+
+            float wiggle =
+                Mathf.Sin(wigglePhase) *
+                wiggleAmplitude *
+                amplitudeScale;
+
+            transform.rotation =
+                bodyRotation *
+                Quaternion.Euler(0f, wiggle, 0f);
         }
     }
 
-    /// 转向避让：把"远离所有避让区"的分量叠加到期望方向上。
-    /// 目标点本身在某个避让区里/附近时（= 要咬的那条腿），忽略那个区，鱼才咬得到。
+    /// Apply steering forces away from all active avoidance zones.
+    /// The zone containing the current bite target is ignored so the fish
+    /// can still reach the user during a bite.
     Vector3 ApplyAvoidance(Vector3 desiredDir, Vector3 finalTarget)
     {
         if (desiredDir.sqrMagnitude < 0.0000001f)
             return desiredDir;
 
         Vector3 steer = desiredDir.normalized;
+
         foreach (var zone in FishAvoidZone.Active)
         {
             if (zone == null)
                 continue;
-            if (Vector3.Distance(finalTarget, zone.transform.position) < zone.radius + 0.02f)
-                continue;   // 目标就在这个区里，不避让它
 
-            Vector3 away = transform.position - zone.transform.position;
-            float d = away.magnitude;
-            float influence = zone.radius + avoidDistance;
-            if (d < influence && d > 0.0001f)
+            // Ignore the zone containing the target.
+            Vector3 closestToTarget = zone.ClosestPoint(finalTarget);
+
+            if (Vector3.Distance(finalTarget, closestToTarget)
+                < avoidDistance)
             {
-                steer += (away / d) * ((1f - d / influence) * avoidStrength);
+                continue;
+            }
+
+            Vector3 away =
+                transform.position -
+                zone.transform.position;
+
+            float distance = away.magnitude;
+
+            float influence =
+            zone.ApproximateRadius +
+            avoidDistance;
+
+            if (distance < influence &&
+                distance > 0.0001f)
+            {
+                float weight =
+                    1f -
+                    distance / influence;
+
+                steer +=
+                    (away / distance) *
+                    (weight * avoidStrength);
             }
         }
-        return steer;
+
+        return steer.normalized;
     }
 
-    /// 位置修正：已经进入避让区内部时，往外轻推（不瞬移）
+    /// Push the fish gently outside any avoidance zone
+    /// if it accidentally enters one.
     void PushOutOfZones(Vector3 finalTarget, float dt)
     {
         foreach (var zone in FishAvoidZone.Active)
         {
             if (zone == null)
                 continue;
-            if (Vector3.Distance(finalTarget, zone.transform.position) < zone.radius + 0.02f)
-                continue;
 
-            Vector3 away = transform.position - zone.transform.position;
-            float d = away.magnitude;
-            if (d < zone.radius)
+            // Ignore the zone containing the target.
+            Vector3 closestToTarget = zone.ClosestPoint(finalTarget);
+
+            if (Vector3.Distance(finalTarget, closestToTarget)
+                < avoidDistance)
             {
-                Vector3 outDir = d > 0.0001f ? away / d : Vector3.up;
-                float newDist = Mathf.MoveTowards(d, zone.radius, 0.15f * dt);
-                transform.position = zone.transform.position + outDir * newDist;
+                continue;
+            }
+
+            Vector3 closest = zone.ClosestPoint(transform.position);
+
+            Vector3 away =
+                transform.position -
+                closest;
+
+            float distance = away.magnitude;
+
+            if (distance < 0.001f)
+            {
+                Vector3 outDir =
+                    distance > 0.0001f ?
+                    away / distance :
+                    Vector3.up;
+
+                float newDistance =
+                    Mathf.MoveTowards(
+                     distance,
+                     avoidDistance,
+                     0.15f * dt);
+
+                transform.position =
+                    zone.transform.position +
+                    outDir * newDistance;
             }
         }
     }
 
+
+    /// Returns true if the specified point is inside any avoidance zone.
     bool InsideAnyZone(Vector3 point)
     {
         foreach (var zone in FishAvoidZone.Active)
         {
             if (zone == null)
                 continue;
-            if (Vector3.Distance(point, zone.transform.position) < zone.radius + 0.01f)
+
+            if (Vector3.Distance(
+                    point,
+                    zone.transform.position)
+                < zone.radius + avoidDistance)
+            {
                 return true;
+            }
         }
+
         return false;
     }
 
+    /// Select a new random wander destination.
+    /// The target should be reasonably far away and outside
+    /// all avoidance zones to encourage smooth curved swimming.
     void PickNewWanderTarget()
     {
-        Vector3 center = wanderCenter != null ? wanderCenter.position
-                       : homePoint != null ? homePoint.position
-                       : transform.position;
+        Vector3 center =
+            wanderCenter != null ?
+            wanderCenter.position :
+            homePoint != null ?
+            homePoint.position :
+            transform.position;
 
-        // 尽量挑离当前位置远一点的点，让鱼画出完整的弧线
+        // Try several random candidates before falling back
+        // to the center position.
         for (int i = 0; i < 8; i++)
         {
-            Vector2 offset = Random.insideUnitCircle * wanderRadius;
-            Vector3 candidate = center + new Vector3(
-                offset.x, Random.Range(-wanderHeight, wanderHeight), offset.y);
+            Vector2 offset =
+                Random.insideUnitCircle *
+                wanderRadius;
 
-            if (Vector3.Distance(candidate, transform.position) > wanderRadius * 0.8f
-                && !InsideAnyZone(candidate))
+            Vector3 candidate =
+                center +
+                new Vector3(
+                    offset.x,
+                    Random.Range(
+                        -wanderHeight,
+                        wanderHeight),
+                    offset.y);
+
+            // Encourage longer swimming arcs instead of tiny movements.
+            if (Vector3.Distance(
+                    candidate,
+                    transform.position)
+                > wanderRadius * 0.8f
+                &&
+                !InsideAnyZone(candidate))
             {
                 wanderTarget = candidate;
                 return;
             }
         }
+
+        // Fallback if no valid target is found.
         wanderTarget = center;
     }
 }

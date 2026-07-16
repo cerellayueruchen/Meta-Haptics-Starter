@@ -1,32 +1,34 @@
 using System.Collections;
 using UnityEngine;
 
-/// 鱼咬人 → 给 VibraForge 发震动指令。
-/// 订阅 Timeline 三组鱼的 OnBite 事件，按鱼的种类发不同风格的震动。
+/// Sends haptic commands to VibraForge when fish bite the user.
+/// Subscribes to the OnBite events from the three fish groups controlled
+/// by the Timeline and triggers different vibration patterns.
 ///
-/// 执行器地址映射（来自 VR-Doctor-Fish 仓库 haptics/README）：
-///   左腿：前侧小执行器 0/2/4，后侧小执行器 16/18，大执行器 32
-///   右腿：左腿地址 +1（前 1/3/5，后 17/19，大 33）
-/// 指令格式：SendCommand(addr, mode(0停/1震), duty(0-15强度), freq(0-7频率))
+/// Actuator address mapping (from VR-Doctor-Fish haptics/README):
+///   Left leg: front small actuators 0/2/4, rear small actuators 16/18, large actuator 32
+///   Right leg: left leg addresses +1 (front 1/3/5, rear 17/19, large 33)
+/// Command format:
+///   SendCommand(addr, mode(0=Off, 1=Vibrate), duty(0-15 intensity), freq(0-7 frequency))
 public class BiteHaptics : MonoBehaviour
 {
     public VibraForge vibraForge;
     public ExperienceTimeline timeline;
 
-    [Header("每种鱼用的执行器地址（每次咬随机挑一个）")]
-    public int[] smallFishAddrs = { 0, 1, 2, 3, 4, 5 };   // 前侧小执行器
-    public int[] bigFishAddrs = { 32, 33 };               // 大执行器
-    public int[] jellyfishAddrs = { 16, 17, 18, 19 };     // 后侧小执行器
+    [Header("Actuator addresses for each fish type (randomly selected for each bite)")]
+    public int[] smallFishAddrs = { 0, 1, 2, 3, 4, 5 };   // Front small actuators
+    public int[] bigFishAddrs = { 32, 33 };               // Large actuators
+    public int[] jellyfishAddrs = { 16, 17, 18, 19 };     // Rear small actuators
 
-    [Header("小鱼：轻痒的两下点触")]
+    [Header("Small fish: two gentle tickling pulses")]
     [Range(0, 15)] public int smallFishDuty = 5;
     [Range(0, 7)] public int smallFishFreq = 3;
 
-    [Header("大鱼：一口重咬后衰减")]
+    [Header("Big fish: one strong bite followed by a fade-out")]
     [Range(0, 15)] public int bigFishDuty = 12;
     [Range(0, 7)] public int bigFishFreq = 2;
 
-    [Header("水母：短促的最大强度刺痛")]
+    [Header("Jellyfish: short, high-intensity sting")]
     [Range(0, 15)] public int jellyfishDuty = 15;
     [Range(0, 7)] public int jellyfishFreq = 7;
 
@@ -34,12 +36,13 @@ public class BiteHaptics : MonoBehaviour
     {
         if (timeline == null)
             timeline = FindFirstObjectByType<ExperienceTimeline>();
+
         if (vibraForge == null)
             vibraForge = FindFirstObjectByType<VibraForge>();
 
         if (timeline == null)
         {
-            Debug.LogWarning("[BiteHaptics] 找不到 ExperienceTimeline，震动不会触发");
+            Debug.LogWarning("[BiteHaptics] ExperienceTimeline not found. Haptic feedback will not be triggered.");
             return;
         }
 
@@ -52,6 +55,7 @@ public class BiteHaptics : MonoBehaviour
     {
         if (timeline == null)
             return;
+
         Unsubscribe(timeline.smallFish, OnSmallFishBite);
         Unsubscribe(timeline.bigFish, OnBigFishBite);
         Unsubscribe(timeline.jellyfish, OnJellyfishBite);
@@ -60,18 +64,22 @@ public class BiteHaptics : MonoBehaviour
     void Subscribe(FishController[] group, System.Action<FishController> handler)
     {
         if (group == null) return;
+
         foreach (var fish in group)
-            if (fish != null) fish.OnBite += handler;
+            if (fish != null)
+                fish.OnBite += handler;
     }
 
     void Unsubscribe(FishController[] group, System.Action<FishController> handler)
     {
         if (group == null) return;
+
         foreach (var fish in group)
-            if (fish != null) fish.OnBite -= handler;
+            if (fish != null)
+                fish.OnBite -= handler;
     }
 
-    // ---------- 三种咬的震动模式 ----------
+    // ---------- Haptic patterns for different fish types ----------
 
     void OnSmallFishBite(FishController fish)
     {
@@ -88,42 +96,49 @@ public class BiteHaptics : MonoBehaviour
         StartCoroutine(JellyfishPattern(Pick(jellyfishAddrs)));
     }
 
-    // 小鱼：轻轻两下点触
+    // Small fish: two light vibration pulses
     IEnumerator SmallFishPattern(int addr)
     {
         Send(addr, 1, smallFishDuty, smallFishFreq);
         yield return new WaitForSeconds(0.12f);
+
         Send(addr, 0, 0, smallFishFreq);
         yield return new WaitForSeconds(0.08f);
+
         Send(addr, 1, smallFishDuty, smallFishFreq);
         yield return new WaitForSeconds(0.12f);
+
         Send(addr, 0, 0, smallFishFreq);
     }
 
-    // 大鱼：重咬 0.4s，衰减 0.3s，停止
+    // Big fish: strong bite, gradual fade, then stop
     IEnumerator BigFishPattern(int addr)
     {
         Send(addr, 1, bigFishDuty, bigFishFreq);
         yield return new WaitForSeconds(0.4f);
+
         Send(addr, 1, bigFishDuty / 2, bigFishFreq);
         yield return new WaitForSeconds(0.3f);
+
         Send(addr, 0, 0, bigFishFreq);
     }
 
-    // 水母：0.3s 最大强度高频刺痛
+    // Jellyfish: short, high-frequency sting
     IEnumerator JellyfishPattern(int addr)
     {
         Send(addr, 1, jellyfishDuty, jellyfishFreq);
         yield return new WaitForSeconds(0.3f);
+
         Send(addr, 0, 0, jellyfishFreq);
     }
 
-    // ---------- 工具 ----------
+    // ---------- Utility methods ----------
 
     int Pick(int[] addrs)
     {
         if (addrs == null || addrs.Length == 0)
             return 0;
+
         return addrs[Random.Range(0, addrs.Length)];
     }
 
@@ -131,6 +146,7 @@ public class BiteHaptics : MonoBehaviour
     {
         if (vibraForge == null)
             return;
+
         vibraForge.SendCommand(addr, mode, duty, freq);
     }
 }

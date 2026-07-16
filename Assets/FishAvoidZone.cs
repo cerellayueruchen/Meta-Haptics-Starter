@@ -1,19 +1,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// 挂在腿部骨骼（或任何障碍物）上的"鱼避让区"（球形）。
-/// 场景里所有启用中的避让区会被鱼自动绕开。
-/// 在 Scene 视图里选中挂了这个组件的物体，可以看到橙色线框球即避让范围。
+/// Avoidance zone attached to an obstacle such as a leg.
+/// The avoidance shape is taken directly from the attached Collider.
+/// CapsuleCollider is recommended.
+/// SphereCollider is also supported.
+[RequireComponent(typeof(Collider))]
 public class FishAvoidZone : MonoBehaviour
 {
-    [Tooltip("避让球体的半径（米，世界空间）")]
-    public float radius = 0.045f;
-
     public static readonly List<FishAvoidZone> Active = new List<FishAvoidZone>();
+
+    private Collider cachedCollider;
+
+    public Collider Collider => cachedCollider;
+
+    void Awake()
+    {
+        cachedCollider = GetComponent<Collider>();
+    }
 
     void OnEnable()
     {
-        Active.Add(this);
+        if (cachedCollider == null)
+            cachedCollider = GetComponent<Collider>();
+
+        if (!Active.Contains(this))
+            Active.Add(this);
     }
 
     void OnDisable()
@@ -21,9 +33,63 @@ public class FishAvoidZone : MonoBehaviour
         Active.Remove(this);
     }
 
+    /// Returns the closest point on the avoidance volume.
+    public Vector3 ClosestPoint(Vector3 point)
+    {
+        return cachedCollider.ClosestPoint(point);
+    }
+
+    /// Returns an approximate radius used only for target filtering.
+    public float ApproximateRadius
+    {
+        get
+        {
+            if (cachedCollider is CapsuleCollider capsule)
+            {
+                float scale = Mathf.Max(
+                    transform.lossyScale.x,
+                    transform.lossyScale.z);
+
+                return capsule.radius * scale;
+            }
+
+            if (cachedCollider is SphereCollider sphere)
+            {
+                return sphere.radius * transform.lossyScale.x;
+            }
+
+            return 0.05f;
+        }
+    }
+
     void OnDrawGizmosSelected()
     {
+        if (cachedCollider == null)
+            cachedCollider = GetComponent<Collider>();
+
         Gizmos.color = new Color(1f, 0.4f, 0.2f, 0.8f);
-        Gizmos.DrawWireSphere(transform.position, radius);
+
+        if (cachedCollider is CapsuleCollider capsule)
+        {
+            Matrix4x4 oldMatrix = Gizmos.matrix;
+            Gizmos.matrix = transform.localToWorldMatrix;
+
+            Gizmos.DrawWireCube(
+                capsule.center,
+                new Vector3(
+                    capsule.radius * 2f,
+                    capsule.height,
+                    capsule.radius * 2f));
+
+            Gizmos.matrix = oldMatrix;
+        }
+        else if (cachedCollider is SphereCollider sphere)
+        {
+            Gizmos.matrix = transform.localToWorldMatrix;
+            Gizmos.DrawWireSphere(
+                sphere.center,
+                sphere.radius);
+            Gizmos.matrix = Matrix4x4.identity;
+        }
     }
 }
