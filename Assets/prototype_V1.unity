@@ -3288,8 +3288,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1842375431}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.50601494, y: 0.03, z: -3.89}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -1.386, y: 0.03, z: -3.088}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3297,7 +3297,7 @@ Transform:
   - {fileID: 527611036}
   - {fileID: 2071221502}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &1859406176 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7770584863604633872, guid: 67de17aaa6711224f80123d9b1ef8cb7, type: 3}
@@ -3350,7 +3350,7 @@ Transform:
   m_GameObject: {fileID: 1897167905}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3685,6 +3685,70 @@ Transform:
   - {fileID: 1897167906}
   m_Father: {fileID: 1842375434}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1999999001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1999999002}
+  - component: {fileID: 1999999003}
+  m_Layer: 0
+  m_Name: ExperienceTimeline
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1999999002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999999001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1999999003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999999001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f8e2a91c7b54d0f8a1e6c92d4b70e15, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  smallFish:
+  - {fileID: 910076729}
+  - {fileID: 1859406181}
+  - {fileID: 1025036910}
+  - {fileID: 591641149}
+  bigFish:
+  - {fileID: 1060216073}
+  - {fileID: 1935820100}
+  - {fileID: 135415221}
+  jellyfish: []
+  totalDuration: 120
+  smallFishBiteTime: 30
+  bigFishBiteTime: 60
+  jellyfishBiteTime: 90
+  calmDownTime: 110
+  turnInterval: 2
+  smallFishBiteCount: 3
+  bigFishBiteCount: 2
+  jellyfishBiteCount: 1
+  playOnStart: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3703,3 +3767,4 @@ SceneRoots:
   - {fileID: 681450820}
   - {fileID: 1842375434}
   - {fileID: 815084680}
+  - {fileID: 1999999002}
