@@ -1,0 +1,6 @@
+{"time": 0, "addr": 0, "mode": 1, "duty": 8, "freq": 4}
+{"time": 0.094, "addr": 0, "mode": 0, "duty": 0, "freq": 0}
+{"time": 0.094, "addr": 2, "mode": 1, "duty": 7, "freq": 4}
+{"time": 0.195, "addr": 2, "mode": 0, "duty": 0, "freq": 0}
+{"time": 0.293, "addr": 0, "mode": 1, "duty": 7, "freq": 4}
+{"time": 0.293, "addr": 2, "mode": 1, "duty": 7, "freq": 4}

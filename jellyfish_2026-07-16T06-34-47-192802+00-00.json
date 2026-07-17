@@ -1,0 +1,3 @@
+{"time": 0, "addr": 4, "mode": 1, "duty": 10, "freq": 7}
+{"time": 0.205, "addr": 4, "mode": 1, "duty": 5, "freq": 5}
+{"time": 0.302, "addr": 4, "mode": 0, "duty": 0, "freq": 0}
