@@ -3716,6 +3716,7 @@ GameObject:
   - component: {fileID: 1999999303}
   - component: {fileID: 1999999304}
   - component: {fileID: 1999999305}
+  - component: {fileID: 1999999306}
   m_Layer: 0
   m_Name: Haptics
   m_TagString: Untagged
@@ -3786,6 +3787,19 @@ MonoBehaviour:
   bigBiteFile: big_fish_bite.json
   stingFile: jellyfish_sting.json
   loopGap: 0.2
+--- !u!114 &1999999306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999999301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a9d2c7e8f1b4d3a9c5e0b6d2f8a4c17, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  timeline: {fileID: 1999999003}
 --- !u!1 &2023145687
 GameObject:
   m_ObjectHideFlags: 0
