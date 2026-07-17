@@ -1,0 +1,13 @@
+{"time": 0.0, "addr": 0, "mode": 1, "duty": 5, "freq": 6}
+{"time": 0.06, "addr": 0, "mode": 0, "duty": 0, "freq": 0}
+{"time": 0.25, "addr": 2, "mode": 1, "duty": 6, "freq": 6}
+{"time": 0.31, "addr": 2, "mode": 0, "duty": 0, "freq": 0}
+{"time": 0.6, "addr": 32, "mode": 1, "duty": 15, "freq": 0}
+{"time": 0.72, "addr": 32, "mode": 1, "duty": 15, "freq": 0}
+{"time": 0.84, "addr": 32, "mode": 1, "duty": 15, "freq": 0}
+{"time": 0.96, "addr": 32, "mode": 1, "duty": 15, "freq": 0}
+{"time": 1.08, "addr": 32, "mode": 1, "duty": 15, "freq": 0}
+{"time": 1.2, "addr": 32, "mode": 1, "duty": 10, "freq": 0}
+{"time": 1.32, "addr": 32, "mode": 1, "duty": 6, "freq": 0}
+{"time": 1.44, "addr": 32, "mode": 1, "duty": 3, "freq": 0}
+{"time": 1.56, "addr": 32, "mode": 0, "duty": 0, "freq": 0}
