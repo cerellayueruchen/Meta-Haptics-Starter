@@ -71,6 +71,9 @@ public class ExperienceAudio : MonoBehaviour
         Subscribe(timeline.smallFish, OnSmallFishBite);
         Subscribe(timeline.bigFish, OnBigFishBite);
         Subscribe(timeline.jellyfish, OnJellyfishBite);
+
+        Debug.Log($"[ExperienceAudio] Ready. background={(background != null ? background.name : "MISSING")}, " +
+                  $"sfx loaded={(smallFish1 != null) && (smallFish2 != null) && (bigFish != null) && (jellyfish != null)}");
     }
 
     void OnDestroy()
@@ -95,6 +98,7 @@ public class ExperienceAudio : MonoBehaviour
                 {
                     musicSource.volume = musicVolume;
                     musicSource.Play();
+                    Debug.Log("[ExperienceAudio] Background music started.");
                 }
                 break;
 
