@@ -61,9 +61,20 @@ public class ExperienceAudio : MonoBehaviour
         sfxSource.playOnAwake = false;
         sfxSource.volume = sfxVolume;
 
+        LogAudioDiagnostics();
+
+        // The experience starts at 0s, so start the music right away instead
+        // of waiting for the Intro phase event. This keeps the music playing
+        // even if the timeline reference or event wiring is broken.
+        if (background != null)
+        {
+            musicSource.Play();
+            Debug.Log("[ExperienceAudio] Background music started.");
+        }
+
         if (timeline == null)
         {
-            Debug.LogWarning("[ExperienceAudio] ExperienceTimeline not found. Audio will not be triggered.");
+            Debug.LogWarning("[ExperienceAudio] ExperienceTimeline not found. Bite sound effects will not be triggered.");
             return;
         }
 
@@ -74,6 +85,61 @@ public class ExperienceAudio : MonoBehaviour
 
         Debug.Log($"[ExperienceAudio] Ready. background={(background != null ? background.name : "MISSING")}, " +
                   $"sfx loaded={(smallFish1 != null) && (smallFish2 != null) && (bigFish != null) && (jellyfish != null)}");
+    }
+
+    /// One-shot startup report so a silent run can be diagnosed from the
+    /// Console (Editor) or logcat (Quest) without guessing.
+    void LogAudioDiagnostics()
+    {
+        var listener = FindFirstObjectByType<AudioListener>();
+
+        Debug.Log(
+            "[ExperienceAudio] Diagnostics: " +
+            $"background={Describe(background)}, " +
+            $"smallFish1={Describe(smallFish1)}, smallFish2={Describe(smallFish2)}, " +
+            $"bigFish={Describe(bigFish)}, jellyfish={Describe(jellyfish)}, " +
+            $"listener={(listener != null ? listener.gameObject.name : "NONE")}, " +
+            $"listenerVolume={AudioListener.volume}, listenerPaused={AudioListener.pause}, " +
+            $"musicVolume={musicVolume}, outputSampleRate={AudioSettings.outputSampleRate}, " +
+            $"speakerMode={AudioSettings.speakerMode}");
+
+        if (listener == null)
+            Debug.LogError("[ExperienceAudio] No AudioListener in the scene. Nothing will be audible.");
+
+#if UNITY_EDITOR
+        // A clip that fails to load in the Editor is usually a Git LFS
+        // pointer file left behind by a checkout without git-lfs. Look at
+        // the source file on disk and say so explicitly.
+        if (background == null)
+        {
+            string path = System.IO.Path.Combine(
+                Application.dataPath, "Resources", audioFolder, backgroundClip + ".mp3");
+
+            if (System.IO.File.Exists(path))
+            {
+                var info = new System.IO.FileInfo(path);
+
+                if (info.Length < 1024)
+                    Debug.LogError(
+                        $"[ExperienceAudio] {path} is only {info.Length} bytes - it is still a Git LFS " +
+                        "pointer, not real audio. Pull the latest default branch (the fixed clips are " +
+                        "committed as regular blobs) and let Unity reimport Assets/Resources/Audio.");
+                else
+                    Debug.LogError(
+                        $"[ExperienceAudio] {path} exists ({info.Length} bytes) but Unity did not import " +
+                        "it as an AudioClip. Right-click Assets/Resources/Audio and choose Reimport.");
+            }
+            else
+            {
+                Debug.LogError($"[ExperienceAudio] Source file not found: {path}");
+            }
+        }
+#endif
+    }
+
+    static string Describe(AudioClip clip)
+    {
+        return clip != null ? $"{clip.name}({clip.length:F1}s)" : "MISSING";
     }
 
     void OnDestroy()
