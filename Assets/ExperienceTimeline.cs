@@ -9,6 +9,19 @@ using UnityEngine;
 ///   60s     Experience ends and returns to a calm state
 public class ExperienceTimeline : MonoBehaviour
 {
+    public enum Phase
+    {
+        Intro,            // 0s: welcome + calm water
+        SmallFishFrenzy,  // 15s
+        BigFishAttacks,   // 30s
+        JellyfishAttacks, // 45s
+        Calm              // 60s
+    }
+
+    /// Broadcast whenever the experience enters a new phase
+    /// (used by BiteHaptics to switch haptic patterns).
+    public event System.Action<Phase> PhaseChanged;
+
     [Header("Fish Groups")]
     public FishController[] smallFish;   // Four small fish (FishV1–V4)
     public FishController[] bigFish;     // Big fish (fish01 / fish02)
@@ -52,11 +65,19 @@ public class ExperienceTimeline : MonoBehaviour
 
     IEnumerator Run()
     {
+        // Wait one frame so every other component (e.g. BiteHaptics) has
+        // finished Start() and subscribed to PhaseChanged.
+        yield return null;
+
         float startTime = Time.time;
 
         Debug.Log("[Timeline] 0s: Experience started. Gentle water flow, all fish swim randomly.");
+        PhaseChanged?.Invoke(Phase.Intro);
 
         // ---- 15–30s: Small fish frenzy (one fish every second) ----
+        yield return WaitUntil(startTime, smallFishStartTime);
+        PhaseChanged?.Invoke(Phase.SmallFishFrenzy);
+
         yield return DispatchLoop(
             smallFish,
             startTime,
@@ -69,6 +90,9 @@ public class ExperienceTimeline : MonoBehaviour
         StopGroup(smallFish);
 
         // ---- 30–45s: Big fish attacks (one fish every 2 seconds) ----
+        yield return WaitUntil(startTime, bigFishStartTime);
+        PhaseChanged?.Invoke(Phase.BigFishAttacks);
+
         yield return DispatchLoop(
             bigFish,
             startTime,
@@ -81,6 +105,8 @@ public class ExperienceTimeline : MonoBehaviour
         StopGroup(bigFish);
 
         // ---- 48s / 55s: Jellyfish attacks ----
+        PhaseChanged?.Invoke(Phase.JellyfishAttacks);
+
         foreach (float t in jellyfishAttackTimes)
         {
             yield return WaitUntil(startTime, t);
@@ -102,6 +128,7 @@ public class ExperienceTimeline : MonoBehaviour
         StopGroup(jellyfish);
 
         Debug.Log("[Timeline] 60s: Experience finished. Returning to a calm state.");
+        PhaseChanged?.Invoke(Phase.Calm);
 
         timelineRoutine = null;
     }
