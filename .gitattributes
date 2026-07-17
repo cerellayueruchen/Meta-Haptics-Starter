@@ -169,3 +169,8 @@ Packages/packages-lock.json linguist-generated
 
 # Exceptions for .asset files such as lightning pre-baking
 LightingData.asset     binary
+
+# VR Doctor Fish experience audio: stored as regular git blobs (not LFS) so
+# the clips still play from checkouts and ZIP downloads that do not resolve
+# Git LFS pointers (e.g. clones without git-lfs installed).
+Assets/Resources/Audio/*.mp3    -filter -diff -merge -text
